@@ -496,7 +496,10 @@ If BODY finishes, `while-no-input' returns whatever value BODY produced."
                (when (and (looking-back "^[[:blank:]]+")
                           ;; Wherever we don't want to indent, we probably also
                           ;; want the default backspace behavior.
-                          (not (run-hook-wrapped 'aggressive-indent--internal-dont-indent-if #'eval))
+                          (let ((change-backspace-behavior-if
+                                 (remove '(null (buffer-modified-p))
+                                         aggressive-indent--internal-dont-indent-if)))
+                            (not (run-hook-wrapped 'change-backspace-behavior-if #'eval)))
                           (not (aggressive-indent--run-user-hooks)))
                  #'delete-indentation))))
   (if aggressive-indent-mode
